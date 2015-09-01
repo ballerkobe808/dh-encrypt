@@ -1,0 +1,10 @@
+{
+  "name": "dh-encrypt",
+  "version": "0.0.1",
+  "dependencies": {
+    "dh-node-utilities": "^0.2.9",
+    "underscore": "^1.8.3"
+  },
+  "description": "Simple encryption and decryption module.",
+  "repository": "git@github.com:uranakam/dh-encrypt.git"
+}
