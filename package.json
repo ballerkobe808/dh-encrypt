@@ -1,10 +1,23 @@
 {
   "name": "dh-encrypt",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "author": {
+    "name": "Michael Uranaka",
+    "email": "uranakam@gmail.com"
+  },
   "dependencies": {
-    "dh-node-utilities": "^0.2.9",
-    "underscore": "^1.8.3"
+    "dh-node-utilities": "0.3.0",
+    "underscore": "1.8.3"
   },
   "description": "Simple encryption and decryption module.",
-  "repository": "git@github.com:uranakam/dh-encrypt.git"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/uranakam/dh-encrypt.git"
+  },
+  "engines": {
+    "node": ">= 0.10"
+  },
+  "main": "index",
+  "license": "(MIT OR Apache-2.0)",
+  "readmeFilename": "README.md"
 }
