@@ -1,28 +1,33 @@
 Configure
 ================
 
-#### Require and configure the module:
+Require and configure the module:
+---------------------------------
 
-    var dhEncrypt = require('dh-encrypt');
-    dhEncrypt.configure('<algorithm>', '<password>', 'iv');
+    const dhEncrypt = require('dh-encrypt');
+    dhEncrypt.configure({
+      algorithm: String, // Required
+      password: String, // Required
+      ivKey: String, // Required
+      logger: Object // Optional logger reference for custom logging. Defaults to console.
+    });
 
 Use
-================
+----
 
-#### 1) Encrypt a value:
+1) Encrypt a value:
 
-    dhEncrypt.encrypt('something');
+        dhEncrypt.encrypt('string');
     
-#### 2) Decrypt a value: 
+2) Decrypt a value: 
 
-    dhEncrypt.decrypt('hexvalue');
+        dhEncrypt.decrypt('encrypted string');
     
-#### Example:
+## Example:
 
-    var encryptedText = dhEncrypt.encrypt('test');
+    let encryptedText = dhEncrypt.encrypt('test');
     console.log(dhEncrypt.decrypt(encryptedText));
     
     Prints:
     
     test
-    
