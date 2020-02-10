@@ -1,81 +1,101 @@
 'use strict';
 
 // dependencies.
-var crypto = require('crypto');
-var stringUtilities = require('dh-node-utilities').StringUtils;
-var _ = require('underscore');
+const crypto = require('crypto');
+const _ = require('lodash');
 
-// encryption and decryption params.
-var password = null;
-var iv = null;
-var algorithm = null;
+// params.
+let algorithm = null;
+let pwBuffer = null;
+let ivKeyBuffer = null;
+let isConfigured = false;
+
+// logger. Defaults to console.
+let logger = console;
 
 /**
  * Configures the module.
- * @param algorithm
- * @param password
- * @param iv
+ * @param options - The options object.
  */
-exports.configure = function(alg, pw, ivKey) {
-  // save the params.
-  algorithm = alg;
-  password = pw;
-  iv = ivKey;
+exports.configure = (options) => {
+  // save the algorithm.
+  if (_.has(options, 'algorithm')) {
+    algorithm = options.algorithm;
+  }
 
-  // check if all params are set.
-  if (isConfigured()) {
-    // build the cipher and decipher.
-    var testCipher = crypto.createCipheriv(alg, new Buffer(pw, 'binary'), new Buffer(ivKey, 'binary'));
-    var testDecipher = crypto.createDecipheriv(alg, new Buffer(pw, 'binary'), new Buffer(ivKey, 'binary'));
-    return true;
+  // save the password as a buffer.
+  if (_.has(options, 'password')) {
+    pwBuffer = Buffer.from(options.password, 'binary');
+  }
+
+  // save the ivKey as a buffer.
+  if (_.has(options, 'ivKey')) {
+    ivKeyBuffer = Buffer.from(options.ivKey, 'binary');
+  }
+
+  // save the logger reference.
+  if (_.has(options, 'logger')) {
+    logger = options.logger;
+  }
+
+  // set is configured if the params are set correctly.
+  if (pwBuffer && ivKeyBuffer && algorithm) {
+    isConfigured = true;
   }
   else {
-    return false;
+    logger.error('Failed to configure the encryption module.');
   }
 };
 
 /**
  * Encrypts a text value.
- * @param value
- * @param callback
- * @returns {*}
+ * @param value - The value to encrypt.
  */
-exports.encrypt = function (value) {
-  if (_.isUndefined(value) || _.isNull(value)) {
+exports.encrypt = (value) => {
+  // dont encrypt if a null value was passed or the module is not configured.
+  if (_.isUndefined(value) || _.isNull(value) || !isConfigured) {
     return null;
   }
 
-  var cipher = crypto.createCipheriv(algorithm, new Buffer(password, 'binary'), new Buffer(iv, 'binary'));
-  var encryptedValue = cipher.update(value, 'utf-8', 'hex');
-  encryptedValue += cipher.final('hex');
-  return encryptedValue;
+  // create the cipher.
+  try {
+    let cipher = crypto.createCipheriv(algorithm, pwBuffer, ivKeyBuffer);
+    // encrypt the value.
+    let encryptedValue = cipher.update(value, 'utf-8', 'hex');
+    encryptedValue += cipher.final('hex');
+
+    // return the value.
+    return encryptedValue;
+  }
+  catch (ex) {
+    logger.error(ex);
+    return null;
+  }
 };
 
 /**
  * Decrypts a text value.
- * @param encryptedValue
- * @param callback
- * @returns {*}
+ * @param encryptedValue - The encrypted value to decrypt.
  */
-exports.decrypt = function (encryptedValue) {
-  if (_.isUndefined(encryptedValue) || _.isNull(encryptedValue)) {
+exports.decrypt = (encryptedValue) => {
+  // if the value is null or the module is not configured.
+  if (_.isUndefined(encryptedValue) || _.isNull(encryptedValue) || !isConfigured) {
     return null;
   }
 
-  var decipher = crypto.createDecipheriv(algorithm, new Buffer(password, 'binary'), new Buffer(iv, 'binary'));
-  var value = decipher.update(encryptedValue, 'hex', 'utf-8');
-  value += decipher.final('utf-8');
-  return value;
-};
+  try {
+    // create the decipher.
+    let decipher = crypto.createDecipheriv(algorithm, pwBuffer, ivKeyBuffer);
 
-/**
- * Checks if all the params are set.
- * @returns {boolean}
- */
-function isConfigured() {
-  if (stringUtilities.isEmpty(algorithm) || stringUtilities.isEmpty(iv) || stringUtilities.isEmpty(password)) {
-    return false;
+    // decrypt the value.
+    let value = decipher.update(encryptedValue, 'hex', 'utf-8');
+    value += decipher.final('utf-8');
+
+    // return the value.
+    return value;
   }
-
-  return true;
-}
+  catch (ex) {
+    logger.error(ex);
+    return null;
+  }
+};
