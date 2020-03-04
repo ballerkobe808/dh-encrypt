@@ -48,6 +48,14 @@ exports.configure = (options) => {
 };
 
 /**
+ * Getter function for the is configured flag.
+ * @returns {boolean} - The value.
+ */
+exports.isConfigured = () => {
+  return isConfigured;
+};
+
+/**
  * Encrypts a text value.
  * @param value - The value to encrypt.
  */
