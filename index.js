@@ -68,8 +68,9 @@ exports.encrypt = (value) => {
   // create the cipher.
   try {
     let cipher = crypto.createCipheriv(algorithm, pwBuffer, ivKeyBuffer);
+
     // encrypt the value.
-    let encryptedValue = cipher.update(value, 'utf-8', 'hex');
+    let encryptedValue = cipher.update(value, 'utf8', 'hex');
     encryptedValue += cipher.final('hex');
 
     // return the value.
@@ -96,8 +97,8 @@ exports.decrypt = (encryptedValue) => {
     let decipher = crypto.createDecipheriv(algorithm, pwBuffer, ivKeyBuffer);
 
     // decrypt the value.
-    let value = decipher.update(encryptedValue, 'hex', 'utf-8');
-    value += decipher.final('utf-8');
+    let value = decipher.update(encryptedValue, 'hex', 'utf8');
+    value += decipher.final('utf8');
 
     // return the value.
     return value;
