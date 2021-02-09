@@ -1,12 +1,12 @@
 {
   "name": "dh-encrypt",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": {
     "name": "Michael Uranaka",
     "email": "uranakam@gmail.com"
   },
   "dependencies": {
-    "lodash": "4.17.20"
+    "lodash": "^4.17.20"
   },
   "description": "Simple encryption and decryption module.",
   "repository": {
